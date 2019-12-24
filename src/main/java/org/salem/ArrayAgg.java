@@ -20,7 +20,7 @@ public class ArrayAgg {
 		@Param
 		NullableVarCharHolder input;
 		@Workspace
-		Object agg;
+		ObjectHolder agg;
 		@Output
 		org.apache.drill.exec.vector.complex.writer.BaseWriter.ComplexWriter out;
 		@Inject
@@ -28,19 +28,19 @@ public class ArrayAgg {
 
 		@Override
 		public void setup() {
-			agg = new Object();
+			agg = new ObjectHolder();
 		}
 
 		@Override
 		public void reset() {
-			agg = new Object();
+			agg = new ObjectHolder();
 		}
 
 		@Override
 		public void add() {
 			org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter listWriter;
-			if (agg == null) {
-				agg = out.rootAsList();
+			if (agg.obj == null) {
+				agg.obj = out.rootAsList();
 			}
 
 			if (input.isSet == 0)
@@ -55,13 +55,13 @@ public class ArrayAgg {
 			rowHolder.end = inputBytes.length;
 			rowHolder.buffer = buffer;
 
-			listWriter = (org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg;
+			listWriter = (org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg.obj;
 			listWriter.varChar().write(rowHolder);
 		}
 
 		@Override
 		public void output() {
-			((org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg).endList();
+			((org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg.obj).endList();
 		}
 	}
 
@@ -71,7 +71,7 @@ public class ArrayAgg {
 		@Param
 		NullableIntHolder input;
 		@Workspace
-		Object agg;
+		ObjectHolder agg;
 		@Output
 		org.apache.drill.exec.vector.complex.writer.BaseWriter.ComplexWriter out;
 		@Inject
@@ -80,31 +80,31 @@ public class ArrayAgg {
 		@Override
 		public void setup() {
 
-			agg = new Object();
+			agg = new ObjectHolder();
 		}
 
 		@Override
 		public void reset() {
-			agg = new Object();
+			agg = new ObjectHolder();
 		}
 
 		@Override
 		public void add() {
 			org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter listWriter;
-			if (agg == null) {
-				agg = out.rootAsList();
+			if (agg.obj == null) {
+				agg.obj = out.rootAsList();
 			}
 
 			if (input.isSet == 0)
 				return;
 
-			listWriter = (org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg;
+			listWriter = (org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg.obj;
 			listWriter.integer().writeInt(input.value);
 		}
 
 		@Override
 		public void output() {
-			((org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg).endList();
+			((org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg.obj).endList();
 		}
 	}
 
