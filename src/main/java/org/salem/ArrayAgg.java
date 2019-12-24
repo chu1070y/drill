@@ -18,7 +18,7 @@ public class ArrayAgg {
 	@FunctionTemplate(name = "array_agg", scope = FunctionScope.POINT_AGGREGATE, nulls = NullHandling.INTERNAL)
 	public static class NullableVarChar_ArrayAgg implements DrillAggFunc {
 		@Param
-		VarCharHolder input;
+		NullableVarCharHolder input;
 		@Workspace
 		ObjectHolder agg;
 		@Output
@@ -42,6 +42,9 @@ public class ArrayAgg {
 			if (agg.obj == null) {
 				agg.obj = out.rootAsList();
 			}
+
+			if (input.isSet == 0)
+				return;
 
 			org.apache.drill.exec.expr.holders.VarCharHolder rowHolder = new org.apache.drill.exec.expr.holders.VarCharHolder();
 			byte[] inputBytes = org.apache.drill.exec.expr.fn.impl.StringFunctionHelpers
@@ -66,7 +69,7 @@ public class ArrayAgg {
 	@FunctionTemplate(name = "array_agg", scope = FunctionScope.POINT_AGGREGATE, nulls = NullHandling.INTERNAL)
 	public static class NullableInt_ArrayAgg implements DrillAggFunc {
 		@Param
-		IntHolder input;
+		NullableIntHolder input;
 		@Workspace
 		ObjectHolder agg;
 		@Output
@@ -92,6 +95,8 @@ public class ArrayAgg {
 				agg.obj = out.rootAsList();
 			}
 
+			if (input.isSet == 0)
+				return;
 
 			listWriter = (org.apache.drill.exec.vector.complex.writer.BaseWriter.ListWriter) agg.obj;
 			listWriter.integer().writeInt(input.value);
